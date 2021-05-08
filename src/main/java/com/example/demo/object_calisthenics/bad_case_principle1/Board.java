@@ -1,4 +1,4 @@
-package com.example.demo.object_calisthenics.bad_case;
+package com.example.demo.object_calisthenics.bad_case_principle1;
 
 public class Board {
     private int[][] data;

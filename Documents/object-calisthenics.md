@@ -78,6 +78,100 @@ public class Board {
 
 ```
 
+***
+
+### 2. else 예약어 금지
+
+모든 프로그래머는 if / else 를 이해하고 모든 프로그래밍 언어에는 이 예약어들이 있다. 
+
+그리고 if / else 로 이뤄진 중첩문들이나 switch - case 의 엄청난 중첩문들을 본 적도 있다.
+
+분기가 많으면 그 만큼 가독성이 떨어진다. 
+
+else 문을 안쓰고 어떻게 프로그래밍을 짜느냐 하면 if() 절을 통해서 return 을 일찍 하던가
+
+if() 절 조차 쓰지 않고 디자인 패턴 중 전략 패턴이나 상태 패턴을 이용해 다형성을 통해서 해결할 수도 있다. 
+ 
+예제는 다음과 같다.
+
+##### if() - early return
+
+````java
+public class MyStatus {
+
+    String status(int hour, boolean isStudy){
+        if(hour > 4 && hour <= 12){
+            return "sleep";
+        }
+
+        return isStudy ? "study" : "vacation";
+    }
+}
+````
+
+##### design-pattern 
+
+````java
+public abstract class Bird {
+    int numberOfCounts;
+
+    public Bird(int numberOfCounts) {
+        this.numberOfCounts = numberOfCounts;
+    }
+
+    public double getBaseSpeed(){
+        return 50;
+    }
+    abstract double getSpeed();
+}
+
+class European extends Bird{
+    public European(int numberOfCounts) {
+        super(numberOfCounts);
+    }
+
+    @Override
+    double getSpeed() {
+        return getBaseSpeed();
+    }
+}
+
+class African extends Bird{
+    public African(int numberOfCounts) {
+        super(numberOfCounts);
+    }
+
+    @Override
+    double getSpeed() {
+        return getBaseSpeed() - getLoadFactor() * numberOfCounts;
+    }
+
+    private double getLoadFactor() {
+        return 2;
+    }
+}
+
+class NorwegianBlue extends Bird{
+    private boolean isNailed;
+
+    public NorwegianBlue(int numberOfCounts, boolean isNailed) {
+        super(numberOfCounts);
+        this.isNailed = isNailed;
+    }
+
+    @Override
+    double getSpeed() {
+        return isNailed ? 0 : getBaseSpeed();
+    }
+}
+
+speed = bird.getSpeed();
+```` 
+
+***
+
+
+
 
  
 
