@@ -476,6 +476,134 @@ public class Age {
 
 ***
 
+## 8. 일급 컬렉션 사용 
+
+이 규칙은 컬렉션 자체를 사용하기 보다 컬렉션을 포함한 새로운 클래스를 정의하고 이 클래스가 컬렉션을 관리하는 것이다. 
+
+규칙 3과 비슷한데 컬렉션을 wrapping 하는 것이다. 
+
+일급 컬렉션을 사용하는 이유는 다음과 같다. 
+
+- __비즈니스에 종속적인 자료구조를 만들 수 있다.__ 
+
+  - 기존의 자바 컬렉션을 이용해서 새로운 자료구조를 정의할 수 있다. 이를 통해서 비즈니스에 적합한 자료구조를 만들 수 있다.
+  
+- __컬렉션에 불변성이나 검증을 내부에서 처리할 수 있다.__
+
+  - private 로 변수를 선언하고 setter 를 쓰지 않고 생성자를 통해서 컬렉션을 만들도록 해서 불변성을 보장할 수 있다. 
+  
+  - 컬렉션 Validate 로직을 내부에서 할 수 있다.
+  
+- __상태와 행위를 한 곳에서 관리할 수 있다.__
+ 
+  - 이를 통해서 응집도를 높이고 결합도를 낮출 수 있다.
+  
+##### Bad Case 
+
+````java
+public class Main {
+
+    public static void main(String[] args) {
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order("pizza", 3000));
+        orders.add(new Order("chicken", 4000));
+        orders.add(new Order("moo", 1000));
+
+        Integer total = orders.stream()
+                .map(order -> order.getPrice())
+                .reduce(0, Integer::sum);
+    }
+}
+
+public class Order {
+    String item;
+    int price;
+
+    public Order(String item, int price) {
+        this.item = item;
+        this.price = price;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+}
+````
+
+##### Good Case 
+
+````java
+public class Main {
+    public static void main(String[] args) {
+        Orders orders = new Orders(List.of(
+                new Order("pizza", 3000),
+                new Order("chicken", 4000),
+                new Order("moo", 1000)));
+
+        int totalPrice = orders.totalPrice();
+        orders.printTotal();
+    }
+}
+
+public class Orders {
+    List<Order> orders;
+
+    public Orders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public int totalPrice(){
+        return orders.stream()
+                .map(order -> order.getPrice())
+                .reduce(0, Integer::sum);
+    }
+
+    public void printTotal(){
+        System.out.println("총 금액: $" + totalPrice());
+    }
+}
+
+public class Order {
+    String item;
+    int price;
+
+    public Order(String item, int price) {
+        this.item = item;
+        this.price = price;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+}
+````
+
+***
+
 
 
  

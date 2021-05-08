@@ -1,4 +1,4 @@
-package com.example.demo.object_calisthenics.good_case_principle8;
+package com.example.demo.object_calisthenics.good_case_principle7;
 
 public class Name {
     String firstName;
