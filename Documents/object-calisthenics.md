@@ -356,6 +356,128 @@ public class Money {
 
 ***
 
+### 5. 축약 금지
+
+누구나 클래스나 메소드 또는 변수의 이름을 줄이려는 유혹에 빠지곤 한다. 
+
+그런 유혹을 뿌리치자. 축약은 그 이름을 제대호 이해하기 어렵게 만든다. 
+
+이름을 제대로 지을때 얻는 이점은 얼마를 말해도 모자르지 않다. 
+
+왜 축약을 하고 싶은걸까? 계속 반복해서 똑같은 단어를 치고 있기 때문에? 이 경우라면 메소드가 너무 대대적으로 사용해서 메소드 이름이 길어지고 있기 떄문이다. 
+
+메소드 이름이 낄어지고 있는건 책임 소재의 오류 일수도 있다. 이를 해결하자. 
+
+그리고 축약은 아니더라도 클래스나 메소드 이름을 한두 단어로 유지하고 문맥을 중복으로 사용하지 말자. 
+
+예를 들면 클래스 이름이 `Order` 이라면 메소드 이르믈 `shipOrder()` 이라고 하지말고 `ship()` 이라고 하자. 
+
+클래스 이름이 `Order` 이므로 문맥이 있으니까 `ship()` 으로 충분하다. 
+
+***
+
+## 6. 모든 엔터티를 작게 유지
+
+이 말은 50줄 이상 되는 클래스와 파일이 10개 이상인 패키지는 없도록 해야한다는 뜻이다.
+
+50줄 이상의 클래스는 보통 한 가지 이상을 하는 경우가 많다. 
+
+그리고 50줄짜리 클래스는 보통 한 화면에 스크롤 없이 볼 수 있어서 한 눈에 파악하기 쉽다는 특징이 있다. 
+
+클래스가 점점 작아지고 패키지도 작아짐에 따라 패키지가 하나의 목적을 달성하기 위해 연관 클래스들이 모이게 된다. 
+
+이를 통해서 패키지들도 클래스처럼 __목적__을 가지게 된다. 패키지가 정체성을 찾을 수 있도록 패키지를 작게 유지하자. 
+
+***
+
+## 7. 2개 이상의 인스턴스 변수를 가진 클래스를 쓰지 않는다. 
+
+실제로 지키기 어려운 규칙 중 하나다. 왜 2개 이상의 인스턴스 변수를 가진 클래스를 금지하는 걸까? 
+
+클래스에서 새로운 인스턴스 변수가 있을 때 마다 클래스의 응집도는 떨어진다.  
+
+많은 인스턴스 변수를 지닌 클래스를 대상으로 응집력 있는 단일 작업을 설명할 수 있는 경우는 거의 없다. 
+
+##### Bad Case 
+
+```java
+public class Car {
+    String ownerAge;
+    String ownerLastName;
+    String ownerFirstName;
+    Position position;
+
+    public Car(String ownerAge, String ownerLastName, String ownerFirstName, Position position) {
+        this.ownerAge = ownerAge;
+        this.ownerLastName = ownerLastName;
+        this.ownerFirstName = ownerFirstName;
+        this.position = position;
+    }
+}
+```
+
+##### Good Case
+
+```java
+public class Car {
+    Owner owner;
+    Position position;
+
+    public Car(Owner owner, Position position) {
+        this.owner = owner;
+        this.position = position;
+    }
+}
+
+public class Owner {
+    Name name;
+    Age age;
+
+    public Owner(Name name, Age age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Age getAge() {
+        return age;
+    }
+}
+
+public class Name {
+    String firstName;
+    String lastName;
+
+    public Name(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public String get(){
+        return firstName + " " + lastName;
+    }
+}
+
+public class Age {
+    int age;
+
+    public Age(int age) {
+        this.age = age;
+    }
+
+    public int age(){
+        return age;
+    }
+}
+```
+
+***
+
+
+
  
 
 
