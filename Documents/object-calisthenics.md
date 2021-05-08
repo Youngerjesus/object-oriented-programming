@@ -170,8 +170,82 @@ speed = bird.getSpeed();
 
 ***
 
+## 3. 원시값과 문자열 포장(wrap)
 
+int 형 원시 값 자체는 아무 의미 없는 스칼라 값일 뿐이다. 
 
+만약 어떤 메소드에서 시간을 int 원시형으로 받는다고 가정해보자. 메소드 선언에서 피라미터 이름을 `time`
+으로 지정해도 다른 누군가는 연도를 넘기는 사태가 일어날 수 있다. 
+
+이렇게 원시 값을 그대로 쓰게 된다면 내가 만든 메소드의 의도를 정확하게 표현할 수 없다.
+
+그러므로 원시 값을 감싸고 있는 객체 클래스로 만들어서 전달하게 한다면 이를 해결할 수 있다. 
+
+그리고 이 객체 클래스에서 내부적으로 validate 를 할 수 있고 원하다면 Immutable 하게 설정할 수도 있다. 
+
+즉 객체로 감싸면 얻는 이점이 많다. 
+
+예제는 다음과 같다. 
+
+##### bad-case 
+
+````yaml
+public class Order {
+    int totalAmount;
+
+    public Order(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public int CalculateMoney(int money){
+        validMoney(money);
+        return money - totalAmount;
+    }
+
+    private void validMoney(int money) {
+
+    }
+}
+````
+
+##### good-case
+
+````yaml
+public class Money {
+    int money;
+
+    public Money(int money) {
+        validate(money);
+        this.money = money;
+    }
+
+    private void validate(int money) {
+        // do something()
+    }
+
+    public int get(){
+        return money;
+    }
+}
+
+public class Order {
+    int totalAmount;
+
+    public Order(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public int CalculateMoney(Money money){
+        return money.get() - totalAmount;
+    }
+
+    private void validMoney(int money) {
+
+    }
+}
+````
+
+***
 
  
 
