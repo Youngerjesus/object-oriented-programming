@@ -98,7 +98,118 @@ if() 절 조차 쓰지 않고 디자인 패턴 중 전략 패턴이나 상태 �
  
 예제는 다음과 같다.
 
-##### if() - early return
+##### Bad Case(MyStatus)
+
+````java
+public class MyStatus {
+
+    String status(int hour, boolean isStudy){
+        String status = "";
+
+        if(hour > 4 && hour <= 12){
+            status = "sleep";
+        } else {
+            if(isStudy){
+                status = "study";
+            } else {
+                status = "vacation";
+            }
+        }
+
+        return status;
+    }
+}
+````
+
+##### Bad Case(Payment)
+
+````java
+public class Payment {
+    boolean isDead;
+    boolean isSeparated;
+    boolean isRetired;
+
+    public Payment(boolean isDead, boolean isSeparated, boolean isRetired) {
+        this.isDead = isDead;
+        this.isSeparated = isSeparated;
+        this.isRetired = isRetired;
+    }
+
+    public double getPayAmount(){
+        double result;
+
+        if(isDead){
+            result = deadAmount();
+        }
+        else {
+            if(isSeparated){
+                result = separatedAmount();
+            }
+            else {
+                if(isRetired){
+                    result = retiredAmount();
+                }else{
+                    result = normalPayAmount();
+                }
+            }
+        }
+        return result;
+    }
+
+    private double deadAmount() {
+        return 100;
+    }
+
+    private double separatedAmount() {
+        return 50;
+    }
+
+    private double retiredAmount() {
+        return 60;
+    }
+
+    private double normalPayAmount() {
+        return 30;
+    }
+}
+````
+
+##### Bad Case(Bird)
+
+````java
+public class Bird {
+    private double numberOfCounts;
+    private boolean isNailed;
+
+    public Bird(double numberOfCounts, boolean isNailed) {
+        this.numberOfCounts = numberOfCounts;
+        this.isNailed = isNailed;
+    }
+
+    public double getSpeed(String type){
+        switch (type){
+            case "EUROPEAN":
+                return getBaseSpeed();
+            case "AFRICAN":
+                return getBaseSpeed() - getLoadFactor() * numberOfCounts;
+            case "NORWEGIAN_BLUE":
+                return (isNailed) ? 0 : getBaseSpeed();
+        }
+
+        throw  new RuntimeException();
+    }
+
+    private double getLoadFactor() {
+        return 0;
+    }
+
+    private double getBaseSpeed() {
+        return 0;
+    }
+}
+````
+
+##### Good Case(MyStatue) - early return 
 
 ````java
 public class MyStatus {
@@ -113,7 +224,52 @@ public class MyStatus {
 }
 ````
 
-##### design-pattern 
+##### Good Case(Payment) - Guard Clauses
+
+````java
+public class Payment {
+    boolean isDead;
+    boolean isSeparated;
+    boolean isRetired;
+
+    public Payment(boolean isDead, boolean isSeparated, boolean isRetired) {
+        this.isDead = isDead;
+        this.isSeparated = isSeparated;
+        this.isRetired = isRetired;
+    }
+
+    public double getPayAmount(){
+        if(isDead){
+            return deadAmount();
+        }
+        if(isSeparated){
+            return separatedAmount();
+        }
+        if(isRetired){
+            return retiredAmount();
+        }
+        return normalPayAmount();
+    }
+
+    private double deadAmount() {
+        return 100;
+    }
+
+    private double separatedAmount() {
+        return 50;
+    }
+
+    private double retiredAmount() {
+        return 60;
+    }
+
+    private double normalPayAmount() {
+        return 30;
+    }
+}
+````
+
+##### Good Case(Bird) - Design Pattern 
 
 ````java
 public abstract class Bird {
