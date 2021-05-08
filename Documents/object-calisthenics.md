@@ -604,6 +604,60 @@ public class Order {
 
 ***
 
+## 9. getter / setter / property 사용 금지
+
+객체가 고유의 역할을 가지고 있다면 그 객체의 속성을 그대로 가지고 오거나 변경하는 일이 없다. 
+
+이 규칙은 __객체에게 묻지 말고 메시지를 보내라__ 는 표현으로도 사용된다. 
+
+추측이긴한데 도메인 객체에 해당하며 DTO 객체에는 해당하지 않는 말인거 같다.
+
+
+##### Bad Case 
+
+````java
+public class Car {
+    String name;
+    Owner owner;
+
+    public Car(String name, Owner owner) {
+        this.name = name;
+        this.owner = owner;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+````
+
+##### Good Case
+
+````java
+public class Car {
+    String name;
+    Owner owner;
+
+    public Car(String name, Owner owner) {
+        this.name = name;
+        this.owner = owner;
+    }
+
+    public void moveForward(){
+        // do something
+    }
+
+    public void status(){
+        System.out.println("name: " + name + " owner: " + owner);
+    }
+}
+````
+
+
 
 
  
