@@ -1,7 +1,5 @@
 # Object-oriented programming
     
-***
-
 Object-oriented 에대해 정리하는 Repository입니다. 
 
 ***
