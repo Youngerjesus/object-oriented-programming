@@ -35,8 +35,10 @@ __9. getter / setter / property 를 쓰지 않는다.__
 
 예제는 다음과 같다. 
 
+
+##### Bad Case 
+
 ```java
-// Bad Case 
 public class Board {
     ... 
     public String board(){
@@ -50,8 +52,11 @@ public class Board {
         return buf.toString();
     }
 }
+```
 
-// Good Case 
+## Good Case
+
+````java
 public class Board {
     ...
 
@@ -76,8 +81,7 @@ public class Board {
     }
 }
 
-```
-
+````
 ***
 
 ### 2. else 예약어 금지
@@ -170,7 +174,7 @@ speed = bird.getSpeed();
 
 ***
 
-## 3. 원시값과 문자열 포장(wrap)
+### 3. 원시값과 문자열 포장(wrap)
 
 int 형 원시 값 자체는 아무 의미 없는 스칼라 값일 뿐이다. 
 
@@ -187,9 +191,9 @@ int 형 원시 값 자체는 아무 의미 없는 스칼라 값일 뿐이다.
 
 예제는 다음과 같다. 
 
-##### bad-case 
+##### Bad Case 
 
-````yaml
+```java
 public class Order {
     int totalAmount;
 
@@ -206,11 +210,27 @@ public class Order {
 
     }
 }
-````
+```
 
-##### good-case
+##### Good Case
 
-````yaml
+```java
+public class Order {
+    int totalAmount;
+
+    public Order(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public int CalculateMoney(Money money){
+        return money.get() - totalAmount;
+    }
+
+    private void validMoney(int money) {
+
+    }
+}
+
 public class Money {
     int money;
 
@@ -227,20 +247,109 @@ public class Money {
         return money;
     }
 }
+```
 
-public class Order {
-    int totalAmount;
+***
 
-    public Order(int totalAmount) {
-        this.totalAmount = totalAmount;
+### 4. 한 줄에 한 점만 사용
+
+객체의 메소드 안에 점이 두 개 이상있다면 너무 깊이 관여하고 있다는 증거다. 
+
+그 객체는 너무 많은 객체를 깊이 관여하고 있다는 뜻이고 이는 캡슐화를 어기고 있다는 증거다. 
+
+객체의 메소드에서는 자기 속을 들춰내기보다는 뭔가 작업을 하도록 만들어야 한다. 
+
+이를 위한 방법으로는 디미터 법칙 (Law of Demeter) 와 유사하다. 이런 식으로 생각하자.
+
+객체의 관여에서는 자기 소유의 장난감, 자기가 만든 장난감, 그리고 누군가가 자기에게 준 장난감과만 객체는 놀 수 있다.
+
+절대 장난감의 장난감과 놀면 안된다. 
+
+예제는 다음과 같다. 
+
+##### Bad Case 
+
+```java
+
+public class Person {
+    Wallet wallet;
+
+    public Person(Wallet wallet) {
+        this.wallet = wallet;
     }
 
-    public int CalculateMoney(Money money){
-        return money.get() - totalAmount;
+    public int getMoney(){
+        return wallet.getTotalMoney().get();
+    }
+}
+
+public class Wallet {
+    List<Money> moneyList;
+
+    public Wallet(List<Money> moneyList) {
+        this.moneyList = moneyList;
     }
 
-    private void validMoney(int money) {
+    public Money getTotalMoney() {
+        int totalMoney = 0;
+        for (Money money : moneyList){
+            totalMoney += money.get();
+        }
+        return new Money(totalMoney);
+    }
+}
 
+public class Money {
+    int money;
+
+    public Money(int money) {
+        this.money = money;
+    }
+
+    public int get(){
+        return money;
+    }
+}
+``` 
+
+##### Good Case 
+
+````java
+public class Person {
+    Wallet wallet;
+
+    public Person(Wallet wallet) {
+        this.wallet = wallet;
+    }
+
+    public int getMoney(){
+        return wallet.getTotalMoney();
+    }
+}
+
+public class Wallet {
+    List<Money> moneyList;
+
+    public int getTotalMoney() {
+       int totalMoney = 0;
+
+       for(Money money : moneyList){
+           totalMoney += money.get();
+       }
+
+       return totalMoney;
+    }
+}
+
+public class Money {
+    int money;
+
+    public Money(int money) {
+        this.money = money;
+    }
+
+    public int get(){
+        return money;
     }
 }
 ````
