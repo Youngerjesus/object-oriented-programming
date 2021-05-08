@@ -1,12 +1,10 @@
 # Object
-    2020 Object-oriented programming
+
+Object-oriented programming
     
-    2020. 09.02 ~ 현재
 ***
 
-Object-oriented에대해 정리하는 Repository입니다. 
-
-http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391409&orderClick=LAG&Kc=
+Object-oriented 에대해 정리하는 Repository입니다. 
 
 ***
 
