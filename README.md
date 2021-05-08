@@ -1,4 +1,4 @@
-# Object-oriented programming
+# Object Oriented programming
     
 Object Oriented Programming 에대해 정리하는 Repository입니다. 
 
