@@ -54,7 +54,7 @@ public class Board {
 }
 ```
 
-## Good Case
+##### Good Case
 
 ````java
 public class Board {
