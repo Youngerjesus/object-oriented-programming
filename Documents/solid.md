@@ -23,6 +23,135 @@
 이 두 가지 변경은 하나는 실질적이고 다른 하나는 꾸미기 위한 매우 다른 원인에 기인한다. 단일 책임 원칙에 의하면 이 문제의 두 측면이 실제로 분리된 두 책임 때문이며, 따라서 분리된 클래스나 모듈로 나누어야 한다
 
 한 클래스를 한 관심사에 집중하도록 유지하는 것이 중요한 이유는, 이것이 클래스를 더욱 튼튼하게 만들기 때문이다.
+
+##### Bad Case - Example  
+
+````java
+public class Invoice {
+
+    private Book book;
+    private int quantity;
+    private double discountRate;
+    private double taxRate;
+    private double total;
+
+    public Invoice(Book book, int quantity, double discountRate, double taxRate, double total) {
+        this.book = book;
+        this.quantity = quantity;
+        this.discountRate = discountRate;
+        this.taxRate = taxRate;
+        this.total = total;
+    }
+
+    public double calculateTotal(){
+        double price = (book.price - book.price * discountRate) * this.quantity;
+
+        double priceWithTaxes = price * (1 + taxRate);
+
+        return priceWithTaxes;
+    }
+
+    public void printInvoice(){
+        System.out.println(quantity + "x " + book.name + " " + book.price + "$");
+        System.out.println("Discount Rate: " + discountRate);
+        System.out.println("Tax Rate: " + taxRate);
+        System.out.println("Total: " + total);
+    }
+
+    public void saveToFile(String[] filename){
+        // creates a file with given name and writes the invoice
+    }
+}
+
+public class Book {
+    String name;
+    String authorName;
+    int year;
+    int price;
+    String isBn;
+
+    public Book(String name, String authorName, int year, int price, String isBn) {
+        this.name = name;
+        this.authorName = authorName;
+        this.year = year;
+        this.price = price;
+        this.isBn = isBn;
+    }
+}
+````
+
+##### Good Case - Example
+
+```java
+public class Invoice {
+    Book book;
+    int quantity;
+    double discountRate;
+    double taxRate;
+    double total;
+
+    public Invoice(Book book, int quantity, double discountRate, double taxRate, double total) {
+        this.book = book;
+        this.quantity = quantity;
+        this.discountRate = discountRate;
+        this.taxRate = taxRate;
+        this.total = total;
+    }
+
+    public double calculateTotal(){
+        double price = (book.price - book.price * discountRate) * this.quantity;
+
+        double priceWithTaxes = price * (1 + taxRate);
+
+        return priceWithTaxes;
+    }
+}
+
+public class InvoicePrinter {
+    private Invoice invoice;
+
+    public InvoicePrinter(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
+    public void print() {
+        System.out.println(invoice.quantity + "x " + invoice.book.name + " " + invoice.book.price + " $");
+        System.out.println("Discount Rate: " + invoice.discountRate);
+        System.out.println("Tax Rate: " + invoice.taxRate);
+        System.out.println("Total: " + invoice.total + " $");
+    }
+}
+
+
+public class InvoicePersistence {
+    Invoice invoice;
+
+    public InvoicePersistence(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
+    public void saveToFile(String filename) {
+        // Creates a file with given name and writes the invoice
+    }
+}
+
+public class Book {
+    String name;
+    String authorName;
+    int year;
+    int price;
+    String isBn;
+
+    public Book(String name, String authorName, int year, int price, String isBn) {
+        this.name = name;
+        this.authorName = authorName;
+        this.year = year;
+        this.price = price;
+        this.isBn = isBn;
+    }
+}
+```
+
 ***
 ### O: OCP(Open/closed principle) - 개방 폐쇄 원칙
 
@@ -44,6 +173,60 @@
 
 모듈의 소스 코드나 바이너리 코드를 수정하지 않아도 모듈의 기능을 확장하거나 변경할 수 있다. 그 모듈의 실행 가능한 바이너리 형태나 링크 가능한 라이브러리(예를 들어 윈도의 DLL이나 자바의 .jar)를 건드릴 필요가 없다.
 
+
+##### Bad Case - Example 
+
+````java
+public class InvoicePersistence {
+    Invoice invoice;
+
+    public InvoicePersistence(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
+    public void saveToFile(String[] filename){
+        // Creates a file with given name and writes the invoice
+    }
+
+    public void saveToDatabase(){
+        // Saves the invoice to database
+    }
+}
+````
+
+##### Good Case - Example 
+
+```java
+public interface InvoicePersistence {
+    void save();
+}
+
+public class FilePersistence implements InvoicePersistence{
+
+    @Override
+    public void save() {
+        // save To File
+    }
+}
+
+public class DatabasePersistence implements InvoicePersistence{
+
+    @Override
+    public void save() {
+        // Save To Database
+    }
+}
+
+
+public class PersistenceManager {
+    InvoicePersistence invoicePersistence;
+
+    public PersistenceManager(InvoicePersistence invoicePersistence) {
+        this.invoicePersistence = invoicePersistence;
+    }
+}
+```
+
 ***
 ### L: LSP(Liskov substitution principle) - 리스코프 치환 원칙
 
@@ -53,7 +236,168 @@
 
  컴퓨터 프로그램에서 자료형 S가 자료형 T의 하위형이라면 필요한 프로그램의 속성(정확성, 수행하는 업무 등)의 변경 없이 자료형 T의 객체를 자료형 S의 객체로 교체(치환)할 수 있어야 한다는 원칙이다. 
  
+##### Bad Case - Example
 
+````java
+public class Rectangle {
+    protected int width, height;
+
+    public Rectangle() {
+    }
+
+    public Rectangle(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getArea() {
+        return width * height;
+    }
+}
+
+public class Square extends Rectangle{
+    public Square() {}
+
+    public Square(int size) {
+        width = height = size;
+    }
+
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
+        super.setHeight(width);
+    }
+
+    @Override
+    public void setHeight(int height) {
+        super.setHeight(height);
+        super.setWidth(height);
+    }
+}
+
+public class Test {
+    static void getAreaTest(Rectangle r) {
+        int width = r.getWidth();
+        r.setHeight(10);
+        System.out.println("Expected area of " + (width * 10) + ", got " + r.getArea()); // Error - Square Case
+    }
+
+    public static void main(String[] args) {
+        Rectangle rc = new Rectangle(2, 3);
+        getAreaTest(rc);
+
+        Rectangle sq = new Square();
+        sq.setWidth(5);
+        getAreaTest(sq);
+    }
+}
+````
+
+##### Good Case - Example
+
+````java
+public class Rectangle {
+    protected int width, height;
+
+    public Rectangle() {
+    }
+
+    public Rectangle(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getArea() {
+        return width * height;
+    }
+}
+
+public class Square {
+    protected int width, height;
+
+    public Square() {}
+
+    public Square(int size) {
+        width = height = size;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+        this.height = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+        this.width = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getArea() {
+        return width * height;
+    }
+}
+
+public class Test {
+    static void getAreaTest(Rectangle r) {
+        int width = r.getWidth();
+        r.setHeight(10);
+        System.out.println("Expected area of " + (width * 10) + ", got " + r.getArea());
+    }
+
+    static void getAreaTest(Square r) {
+        r.setHeight(10);
+        System.out.println("Expected area of " + (10 * 10) + ", got " + r.getArea());
+    }
+
+    public static void main(String[] args) {
+        Rectangle rc = new Rectangle(2, 3);
+        getAreaTest(rc);
+
+        Square sq = new Square();
+        sq.setWidth(5);
+        getAreaTest(sq);
+    }
+}
+````
 ***
 ### I: ISP(Interface segregation principle) - 인터페이스 분리 원칙
 
@@ -68,6 +412,72 @@
 인터페이스 분리 원칙을 통해 시스템의 내부 의존성을 약화시켜 리팩토링, 수정, 재배포를 쉽게 할 수 있다. 
 
 인터페이스 분리 원칙은 SOLID 5원칙의 하나이며, GRASP의 밀착 원칙과 비슷하다.
+
+##### Bad Case - Example 
+
+````java
+public interface ParkingLot {
+    void parkCar();	// Decrease empty spot count by 1
+    void unparkCar(); // Increase empty spots by 1
+    void getCapacity();	// Returns car capacity
+    double calculateFee(Car car); // Returns the price based on number of hours
+    void doPayment(Car car);
+}
+
+class Car{
+
+}
+
+public class FreeParkingLot implements  ParkingLot{
+    @Override
+    public void parkCar() {
+
+    }
+
+    @Override
+    public void unparkCar() {
+
+    }
+
+    @Override
+    public void getCapacity() {
+
+    }
+
+    @Override
+    public double calculateFee(Car car) {
+        return 0;
+    }
+
+    @Override
+    public void doPayment(Car car) {
+        throw new RuntimeException("Parking lot is free");
+    }
+}
+````
+
+##### Good Case - Example 
+
+````java
+public interface ParkingLot {
+    void parkCar();	// Decrease empty spot count by 1
+    void unparkCar(); // Increase empty spots by 1
+    void getCapacity();	// Returns car capacity
+}
+
+public interface PaidParkingLot extends ParkingLot{
+    double calculateFee(Car car); // Returns the price based on number of hours
+    void doPayment(Car car);
+}
+
+class Car {
+
+}
+
+public interface FreeParkingLot extends ParkingLot {
+    void doSomething(); 
+}
+````
 ***
 ### D: DIP(Dependency inversion principle) - 의존관계 역전 원칙
 
