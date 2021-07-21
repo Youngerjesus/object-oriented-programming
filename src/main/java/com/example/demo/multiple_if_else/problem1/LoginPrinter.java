@@ -1,4 +1,4 @@
-package com.example.demo.multiple_if_else;
+package com.example.demo.multiple_if_else.problem1;
 
 public enum LoginPrinter implements Printer{
     GOOGLE {
