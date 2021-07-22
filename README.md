@@ -1,6 +1,6 @@
 # Object Oriented Programming
     
-Object Oriented Programming 에 대해 정리하는 Repository입니다. 
+Object Oriented Programming 에 대해 정리한 레파지토리입니다. 
 
 ***
 
