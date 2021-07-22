@@ -1,8 +1,10 @@
 # Object Oriented Programming
     
-Object Oriented Programming 에대해 정리하는 Repository입니다. 
+Object Oriented Programming 에 대해 정리하는 Repository입니다. 
 
 ***
+
+## 목차
 
 <ul>
     <li> <a href="Documents/solid.md"> SOLID (객체 지향 설계)</a>  </li>
