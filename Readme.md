@@ -14,3 +14,4 @@ Object Oriented Programming 에 대해 정리한 레파지토리입니다.
 
 - [Object Oriented Calisthenics (객체 지향 생활 체조)](documents/object-calisthenics.md)
 
+- [JPA 를 이용한 객체 경계](documents/object-boundary.md)
